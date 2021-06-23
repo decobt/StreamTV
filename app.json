@@ -1,0 +1,12 @@
+{
+  "name": "StreamTV",
+  "displayName": "StreamTV",
+  "expo": {
+    "name": "StreamTV",
+    "slug": "StreamTV",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
