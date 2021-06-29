@@ -7,7 +7,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { FlatList } from 'react-native-gesture-handler';
 
 import Storage from 'react-native-storage';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+//import AsyncStorage from '@react-native-community/async-storage';
 
 const storage = new Storage({
   // maximum capacity, default 1000 key-ids
@@ -149,10 +150,10 @@ export class Home extends Component {
           <View style={{ flexWrap: 'wrap', justifyContent: 'space-between', flexDirection: 'row'}}>
             <Text style={[styles.hero, {}]}>What to watch next?</Text>
             <Icon
+                raised
                 name="bars"
                 type="font-awesome"
                 color="#16a085"
-                style={{padding: 14, paddingTop: 22}}
                 onPress={() => navigation.navigate('About')} />
           </View>
         </View>
@@ -285,7 +286,7 @@ export class TV extends Component {
             <Text style={[styles.hero, {}]}>{title}</Text>
           </View>
         </View>
-        <ScrollView>
+
         <View style={{position: 'relative'}}>
           {isLoading && (
             <ActivityIndicator size="large" color="white" style={{ position: 'absolute', top: '46%', left: '46%', zIndex: 200}} />
@@ -305,6 +306,7 @@ export class TV extends Component {
             playWhenInactive={false}
           />
         </View>
+        <ScrollView>
           {channel.description != "" && (
             <View>
             <Text style={styles.mainTitle}>Description</Text>

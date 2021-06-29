@@ -8,7 +8,8 @@ export const styles = StyleSheet.create({
       fontSize: 28,
       lineHeight: 34,
       letterSpacing: -1.5,
-      padding: 16
+      padding: 16,
+      color: 'black'
     },
     container: {
       flex: 1,
@@ -56,7 +57,8 @@ export const styles = StyleSheet.create({
       marginBottom: 10,
       marginTop: 10,
       textTransform: 'uppercase',
-      padding: 15
+      padding: 15,
+      color: 'black'
     },
     subTitle: {
       fontFamily: 'montserrat-regular',
