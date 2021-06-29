@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
-import { SafeAreaView, ScrollView, ActivityIndicator, ImageBackground, StyleSheet, Text, View , TouchableHighlight, Image} from 'react-native';
+import { SafeAreaView, ScrollView, ActivityIndicator, ImageBackground, BackHandler, Text, View , TouchableHighlight, Image} from 'react-native';
 import Video from 'react-native-video';
 import { Icon } from 'react-native-elements'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { FlatList } from 'react-native-gesture-handler';
+
+import Storage from 'react-native-storage';
+import AsyncStorage from '@react-native-community/async-storage';
+
+const storage = new Storage({
+  // maximum capacity, default 1000 key-ids
+  size: 1000,
+  storageBackend: AsyncStorage, 
+  defaultExpires: null,
+  enableCache: true,
+});
 
 import {programList} from './assets/channels/channels';
 import {styles} from './assets/styles/styles';
@@ -61,7 +72,6 @@ export class ProgramList extends Component {
         underlayColor="#16a085"
         style={styles.card}
         navigation={navigation}
-        
         >
         <View>
           <View style={styles.logo}>
@@ -83,13 +93,51 @@ export class ProgramList extends Component {
 export class Home extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      favoriteData: [],
+      favoriteList: []
+    };
   }
+
+  handleFetchFavorites = () => {
+    const { favoriteList } = this.state;
+    let newList = [];
+    storage.load({
+      key: 'favorites',
+    })
+    .then(ret => {
+      this.setState({ favoriteData: ret });
+      programList.makedonski.forEach((item, index) =>{
+        if(ret.includes(item.id)){
+          newList.push(item);
+        }
+      });
+      this.setState({ favoriteList: newList });
+    })
+    .catch(err => {
+      // any exception including data not found
+      //TODO
+    });
+  }
+
+  componentDidMount = () => {
+    this.props.navigation.addListener(
+      'focus',
+      () => {
+        this.handleFetchFavorites();
+      }
+    );
+  }
+
   render() {
     const navigation = this.props.navigation;
+    const { favoriteList } = this.state;
+
     const item = {
       id: "us5",
       title: "AXN",
-      description: "",
+      description: "AXN is a pay television channel owned by Sony Pictures Television, which was first launched on June 22, 1997. Local versions have since been launched in several parts of the world, including Europe, Japan, Asia, and Latin America. Funded through advertising and subscription fees, AXN primarily airs action genre and reality programming.",
       url: "https://www.livedoomovie.com/02_AXNHD_720p/chunklist.m3u8",
       logo: "http://static.epg.best/id/AXN.id.png"
     };
@@ -127,6 +175,13 @@ export class Home extends Component {
 
         </View></View>
 
+        {favoriteList.length>0 && (
+          <View>
+            <Text style={styles.mainTitle}>Favorites</Text>
+            <ProgramList channels={favoriteList} navigation={navigation} />
+          </View>
+        )}
+
         <Text style={styles.mainTitle}>Macedonian</Text>
         <ProgramList channels={programList.makedonski} navigation={navigation} />
 
@@ -151,7 +206,47 @@ export class TV extends Component {
 
     this.state = {
       isLoading: false,
+      favorite: false,
+      favoriteData: []
     };
+  }
+  
+  addToFavorites = (item) => {
+    const { favorite, favoriteData } = this.state;
+    let newData = [];
+    if(favorite == false){
+      newData = favoriteData.concat([item.id]);
+      storage.save({
+        key: 'favorites',
+        data: newData
+      });
+      this.setState({ favorite: true, favoriteData: newData });
+    }else{
+      newData = favoriteData.filter(function(i) {
+        return i !== item.id
+      });
+      storage.save({
+        key: 'favorites',
+        data: newData
+      });
+      this.setState({ favorite: false, favoriteData: newData });
+    }
+  }
+
+  componentDidMount = () => {
+    storage.load({
+      key: 'favorites',
+    })
+    .then(ret => {
+      if(ret.includes(this.props.route.params.item.id)){
+        this.setState({ favorite: true });
+      }
+      this.setState({ favoriteData: ret });
+    })
+    .catch(err => {
+      // any exception including data not found
+      //TODO
+    });
   }
   
   render() {
@@ -160,7 +255,7 @@ export class TV extends Component {
     const title = this.props.route.params.item.title;
     const channel = this.props.route.params.item;
 
-    const { isLoading } = this.state;
+    const { isLoading, favorite } = this.state;
 
     const onVideoError = () => {
       this.setState({ isLoading: false });
@@ -220,18 +315,33 @@ export class TV extends Component {
       </View>
 
       <TouchableHighlight
-        onPress={() => navigation.navigate('Home')} 
+        onPress={() => this.addToFavorites(channel)} 
         style={{ margin: 10, padding: 10, backgroundColor: '#16a085', borderRadius: 50}} 
        >
-        <View style={{flexWrap: 'wrap', justifyContent: 'center', flexDirection: 'row'}}>
-          <Icon
-            name="plus-square"
-            type="font-awesome"
-            color="white" 
-            style={{ padding: 8}}
-            />
-          <Text style={[styles.subTitle, { color: 'white'}]}>Add to favorites</Text>
-        </View>
+        <View>
+          {!favorite && (
+            <View style={{flexWrap: 'wrap', justifyContent: 'center', flexDirection: 'row'}}>
+              <Icon
+              name="plus-square"
+              type="font-awesome"
+              color="white" 
+              style={{ padding: 8}}
+              />
+              <Text style={[styles.subTitle, { color: 'white'}]}>Add to favorites</Text>
+            </View> 
+          )}
+          {favorite && (
+            <View style={{flexWrap: 'wrap', justifyContent: 'center', flexDirection: 'row'}}>
+              <Icon
+              name="minus-square"
+              type="font-awesome"
+              color="white" 
+              style={{ padding: 8}}
+              />
+              <Text style={[styles.subTitle, { color: 'white'}]}>Remove from favorites</Text>
+            </View>
+          )}
+</View>
        </TouchableHighlight>
 
        </SafeAreaView>
