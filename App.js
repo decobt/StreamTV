@@ -109,7 +109,23 @@ export class Home extends Component {
     })
     .then(ret => {
       this.setState({ favoriteData: ret });
+
       programList.makedonski.forEach((item, index) =>{
+        if(ret.includes(item.id)){
+          newList.push(item);
+        }
+      });
+      programList.srpski.forEach((item, index) =>{
+        if(ret.includes(item.id)){
+          newList.push(item);
+        }
+      });
+      programList.hrvatski.forEach((item, index) =>{
+        if(ret.includes(item.id)){
+          newList.push(item);
+        }
+      });
+      programList.foreign.forEach((item, index) =>{
         if(ret.includes(item.id)){
           newList.push(item);
         }
@@ -274,7 +290,7 @@ export class TV extends Component {
     return (
       <SafeAreaView style={{ flex: 1, flexDirection: "column", justifyContent: 'space-between' }}>
         
-      <View style={{ backgroundColor: '#f5f5f5', flex: 1, borderBottomRightRadius: 50, marginBottom: 20 }}>
+      <View style={{ flex: 1, borderBottomRightRadius: 50, marginBottom: 20 }}>
         <View>
           <View style={{ flexWrap: 'wrap', justifyContent: 'space-between', flexDirection: 'row'}}>
             <Icon
@@ -318,29 +334,27 @@ export class TV extends Component {
 
       <TouchableHighlight
         onPress={() => this.addToFavorites(channel)} 
-        style={{ margin: 10, padding: 10, backgroundColor: '#16a085', borderRadius: 50}} 
+        style={{ margin: 10, padding: 10, position: 'absolute', bottom: 10, right: 10, backgroundColor: '#16a085', borderRadius: 50 }} 
        >
         <View>
           {!favorite && (
             <View style={{flexWrap: 'wrap', justifyContent: 'center', flexDirection: 'row'}}>
               <Icon
-              name="plus-square"
+              name="heart"
               type="font-awesome"
               color="white" 
               style={{ padding: 8}}
               />
-              <Text style={[styles.subTitle, { color: 'white'}]}>Add to favorites</Text>
             </View> 
           )}
           {favorite && (
             <View style={{flexWrap: 'wrap', justifyContent: 'center', flexDirection: 'row'}}>
               <Icon
-              name="minus-square"
+              name="heart"
               type="font-awesome"
-              color="white" 
+              color="red" 
               style={{ padding: 8}}
               />
-              <Text style={[styles.subTitle, { color: 'white'}]}>Remove from favorites</Text>
             </View>
           )}
 </View>
