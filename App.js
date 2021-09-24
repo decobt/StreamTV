@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { SafeAreaView, ScrollView, ActivityIndicator, ImageBackground, BackHandler, Text, View , TouchableHighlight, Image} from 'react-native';
+import { SafeAreaView, ScrollView, ActivityIndicator, ImageBackground, Text, View , TouchableHighlight } from 'react-native';
 import Video from 'react-native-video';
 import { Icon } from 'react-native-elements'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { FlatList } from 'react-native-gesture-handler';
 
 import Storage from 'react-native-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,6 +19,7 @@ const storage = new Storage({
 
 import {programList} from './assets/channels/channels';
 import {styles} from './assets/styles/styles';
+import { ProgramList } from './components/ProgramList';
 
 const HomeStack = createStackNavigator();
 function App() {
@@ -52,45 +52,6 @@ function App() {
     </NavigationContainer>
   );
 }
-
-export class ProgramList extends Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    const items = this.props.channels;
-    const navigation = this.props.navigation;
-
-    return (
-      <FlatList
-      data={items}
-      horizontal={true}
-      initialNumToRender={5} 
-      renderItem={({ item }) => (
-        <TouchableHighlight
-        key={item.id}
-        onPress={() => navigation.navigate('TV', { item: item })} 
-        underlayColor="#16a085"
-        style={styles.card}
-        navigation={navigation}
-        >
-        <View>
-          <View style={styles.logo}>
-            <ImageBackground source={{ uri: item.logo }}
-            resizeMode = 'contain'
-            style={[ styles.imageBG, {height: 300, width: 200, borderRadius: 8 }]}></ImageBackground>
-          </View>
-          <Text style={styles.subTitle}>{item.title}</Text>
-        </View>
-        </TouchableHighlight>
-      )}
-      keyExtractor={(item) => item.id}
-      style={styles.list}
-    />
-    );
-  }
-}
-
 export class Home extends Component {
   constructor(props) {
     super(props);
