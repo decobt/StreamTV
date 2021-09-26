@@ -11,7 +11,8 @@ export class ProgramList extends Component {
     render() {
       const items = this.props.channels;
       const navigation = this.props.navigation;
-  
+      const storage = this.props.storage;
+      
       return (
         <FlatList
         data={items}
@@ -20,7 +21,7 @@ export class ProgramList extends Component {
         renderItem={({ item }) => (
           <TouchableHighlight
           key={item.id}
-          onPress={() => navigation.navigate('TV', { item: item })} 
+          onPress={() => navigation.navigate('TV', { item: item, storage: storage })} 
           underlayColor="#16a085"
           style={styles.card}
           navigation={navigation}
